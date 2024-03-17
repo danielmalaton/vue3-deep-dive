@@ -3,6 +3,9 @@
   #hello {
     color: red;
   }
+  .mt-4 {
+    margin: 4px;
+  }
 </style>
 
 <div id="app"></div>
@@ -11,10 +14,12 @@
   const { h, createApp } = Vue
 
   const Stack = {
+    props: ['size'], // different from course
     render () {
-      return h('div', {
-        id: 'hello'
-      }, [h('span', 'world')])
+      const slots = this.$slots.default
+        ? this.$slots.default()
+        : [];
+      return h('div', { class: 'mt-4' }, slots)
     }
   }
 
@@ -22,7 +27,23 @@
     components: {
       Stack
     },
-    template: `<Stack />`
+    template: `
+    <Stack size="4">
+      <div>Hello</div>
+      <Stack size="4">
+        <div>Hello</div>
+        <div>Hello</div>
+      </Stack>
+      <Stack size="4">
+        <div>Hello</div>
+        <div>Hello</div>
+        <Stack size="4">
+          <div>Hello</div>
+          <div>Hello</div>
+        </Stack>
+      </Stack>
+    </Stack>
+    `
   }
 
   createApp(App).mount('#app')
