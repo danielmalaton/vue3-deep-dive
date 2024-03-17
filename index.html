@@ -1,0 +1,29 @@
+<script src="https://unpkg.com/vue@3.4.21"></script>
+<style>
+  #hello {
+    color: red;
+  }
+</style>
+
+<div id="app"></div>
+
+<script>
+  const { h, createApp } = Vue
+
+  const Stack = {
+    render () {
+      return h('div', {
+        id: 'hello'
+      }, [h('span', 'world')])
+    }
+  }
+
+  const App = {
+    components: {
+      Stack
+    },
+    template: `<Stack />`
+  }
+
+  createApp(App).mount('#app')
+</script>
