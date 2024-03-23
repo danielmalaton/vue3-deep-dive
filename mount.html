@@ -1,0 +1,46 @@
+<!-- This file is a high level of the mount function working in Vue3 -->
+
+<div id="app"></div>
+
+<script>
+function h(tag, props, children) {
+  return {
+    tag,
+    props,
+    children,
+  };
+}
+
+function mount(vnode, container) {
+  const element = document.createElement(vnode.tag);
+  if (vnode.props) {
+    for (let key in vnode.props) {
+      element.setAttribute(key, vnode.props[key]);
+    }
+  }
+
+  if (vnode.children) {
+    if (typeof vnode.children === 'string') {
+      element.innerText = vnode.children;
+    } else {
+      vnode.children.forEach(child => {
+        mount(child, element);
+      });
+    }
+  }
+
+  container.appendChild(element);
+}
+
+const vdom = h('div', { class: 'red' }, [
+  h('span', null, 'hello'),
+]);
+
+mount(vdom, document.getElementById('app'));
+</script>
+
+<style>
+.red {
+  color: red;
+}
+</style>
