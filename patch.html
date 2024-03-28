@@ -61,7 +61,7 @@ function patch (newNode, oldNode) {
           patch(child, oldNode.children[childIndex]);
         }
       });
-
+      // use removeChild
       oldNode.children.slice(newNode.children.length).forEach(child => child.el.innerHTML = '');
     }
   }
