@@ -1,0 +1,92 @@
+<!-- This file is a high level of the mount function working in Vue3 -->
+
+<div id="app"></div>
+
+<script>
+function h(tag, props, children) {
+  return {
+    tag,
+    props,
+    children,
+  };
+}
+
+function mount(vnode, container) {
+  const element = vnode.el = document.createElement(vnode.tag);
+  if (vnode.props) {
+    for (let key in vnode.props) {
+      element.setAttribute(key, vnode.props[key]);
+    }
+  }
+
+  if (vnode.children) {
+    if (typeof vnode.children === 'string') {
+      element.innerText = vnode.children;
+    } else {
+      vnode.children.forEach(child => {
+        mount(child, element);
+      });
+    }
+  }
+
+  container.appendChild(element);
+}
+
+function patch (newNode, oldNode) {
+  const element = oldNode.el;
+  for (let key in newNode.props) {
+    const newValue = newNode.props[key];
+    if (oldNode.props[key] !== newValue) {
+      element.setAttribute(key, newValue);
+    }
+  }
+
+  for (let key in oldNode.props) {
+    if (newNode.props[key] === undefined) {
+      element.removeAttribute(key);
+    }
+  }
+
+  if (typeof newNode.children === 'string') {
+    element.innerText = newNode.children;
+  } else if (Array.isArray(newNode.children)) {
+    if (typeof oldNode.children === 'string') {
+      element.innerHTML = '';
+      newNode.children.forEach(child => mount(child, element));
+    } else if (Array.isArray(oldNode.children)) {
+      newNode.children.forEach((child, childIndex) => {
+        if (childIndex >= oldNode.children.length) {
+          mount(child, element);
+        } else {
+          patch(child, oldNode.children[childIndex]);
+        }
+      });
+
+      oldNode.children.slice(newNode.children.length).forEach(child => child.el.innerHTML = '');
+    }
+  }
+}
+
+const vdom = h('div', { class: 'red' }, [
+  h('span', null, 'hello'),
+]);
+
+const vdom2 = h('div', { class: 'green'}, [
+  h('span', null, 'greeting'),
+  h('span', { class: 'red' }, 'lam'),
+]);
+mount(vdom2, document.getElementById('app'));
+
+const vdom3 = h('div', { class: 'green'}, 'hi');
+
+patch(vdom, vdom2);
+</script>
+
+<style>
+.red {
+  color: red;
+}
+.green {
+  color: green;
+}
+</style>
